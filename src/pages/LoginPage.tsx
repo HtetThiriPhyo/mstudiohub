@@ -32,7 +32,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <AppLogo />
         <p className="mt-8 text-xs font-bold uppercase tracking-[0.3em] text-teal">
-          Everything Apple is here
+          Everything you need is here
         </p>
         <h1 className="mt-2 text-4xl font-extrabold tracking-tight">
           Welcome Back.
