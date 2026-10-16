@@ -1,0 +1,377 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* The document (html) is the single scroll container, so page content
+   scrolls behind the fixed bottom navigation. body/#root only *grow* to
+   fill the viewport (min-height) rather than being fixed-height boxes —
+   a fixed height plus overflow here turns body into a nested scroll
+   container that traps the content instead of letting it scroll out
+   behind the nav. */
+html {
+  height: 100%;
+  /* Clip horizontal overflow at the root. Kept off `body` on purpose: an
+     overflow value on body would turn it into a (non-scrolling) scroll
+     container, which breaks the sticky header (sticky would resolve
+     against body instead of the page scroller). */
+  overflow-x: hidden;
+}
+body,
+#root {
+  min-height: 100%;
+}
+body {
+  @apply bg-mist text-ink font-sans antialiased;
+  background-image:
+    radial-gradient(
+      1200px 600px at 80% -10%,
+      rgba(0, 107, 137, 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 500px at -10% 20%,
+      rgba(14, 135, 169, 0.08),
+      transparent 55%
+    );
+}
+
+@layer components {
+  .glass {
+    @apply rounded-3xl border shadow-glass;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.88),
+      rgba(244, 247, 250, 0.78)
+    );
+    border-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    box-shadow:
+      0 24px 70px rgba(5, 49, 74, 0.18),
+      0 8px 24px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  .glass-dark {
+    @apply rounded-3xl text-white shadow-glass;
+    background: linear-gradient(
+      135deg,
+      rgba(5, 49, 74, 0.92),
+      rgba(0, 82, 120, 0.88)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+}
+
+@supports not (
+  (backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))
+) {
+  .glass {
+    background: #ffffff;
+  }
+  .glass-dark {
+    background: #102a43;
+  }
+}
+
+/* hide scrollbars for carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.notification-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+.notification-layer > * {
+  pointer-events: auto;
+}
+
+.notification-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  border: 0;
+  background: rgba(5, 49, 74, 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: default;
+}
+
+.notification-panel {
+  position: fixed;
+  z-index: 1100;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(390px, calc(100vw - 24px));
+  max-height: min(620px, calc(100vh - 150px));
+  color: #0b0f14;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.94),
+    rgba(244, 247, 250, 0.9)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 26px;
+  backdrop-filter: blur(28px) saturate(155%);
+  -webkit-backdrop-filter: blur(28px) saturate(155%);
+  box-shadow:
+    0 30px 80px rgba(5, 49, 74, 0.28),
+    0 12px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  overflow-y: auto;
+}
+
+.notification-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45),
+    rgba(255, 255, 255, 0.08)
+  );
+}
+
+.notification-panel-content {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 640px) {
+  .notification-panel {
+    left: 12px;
+    right: 12px;
+    bottom: 76px;
+    top: auto;
+    width: auto;
+    max-height: calc(100vh - 150px);
+  }
+}
+
+@media (min-width: 641px) {
+  .notification-panel {
+    top: 76px;
+    right: 24px;
+  }
+}
+
+@supports not (
+  (backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))
+) {
+  .notification-panel {
+    background: rgba(255, 255, 255, 0.97);
+  }
+  .notification-backdrop {
+    background: rgba(5, 49, 74, 0.18);
+  }
+}
+
+:focus-visible {
+  outline: 3px solid rgba(0, 82, 120, 0.32);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+:root {
+  --color-primary: #005278;
+  --color-primary-dark: #05314a;
+  --color-button: #05314a;
+  --color-background: #f4f7fa;
+  --color-surface: #ffffff;
+  --color-text: #0b0f14;
+  --color-muted: #667085;
+  --color-border: rgba(0, 82, 120, 0.12);
+  --color-success: #168a63;
+  --color-error: #d64545;
+}
+
+/* ------------------------------------------------------------------ *
+ * Bottom navigation — single compact frosted-glass pill.
+ * One fixed layer only: the compact, centered navigation pill
+ * (`.bottom-nav__bar`) carries its own semi-transparent white frosted
+ * surface (static blur, hairline rim, soft shadow). Page content scrolls
+ * underneath it. Translucent white only — no navy/blue tint, no colored
+ * gradient, and no separate/second background layer. The blur is static
+ * (never animated) so it stays GPU-cheap. A no-blur fallback lives below.
+ * ------------------------------------------------------------------ */
+
+/* Centered fixed navigation wrapper (z-index 1000). It is only a centering
+   flex container for the single frosted pill: it has no background of its
+   own, so it never renders a second frosted layer, and its transparent
+   gutter lets taps pass through to the page. */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  /* No horizontal padding: the compact pill width below already leaves an
+     equal, safe margin on both sides, and the flex centering keeps the
+     left/right margins identical. */
+  padding: 0;
+  /* Let taps pass through the transparent gutter to the page behind it */
+  pointer-events: none;
+}
+
+.bottom-nav__bar {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  /* Compact, centered floating pill: caps at 330px on wider screens and
+     falls back to (100vw - 48px) on small ones, keeping an equal 24px
+     gutter on each side so it can never touch the edges or overflow. */
+  width: min(330px, calc(100vw - 48px));
+  min-height: 66px;
+  padding: 7px;
+  border-radius: 34px;
+
+  /* Clean white frosted-glass surface (reference-matched): soft
+     semi-transparent white so content stays subtly visible behind it,
+     a hairline soft-white rim edge, and a neutral soft shadow. Blur is
+     applied to this panel only and is never animated. */
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 12px 32px -14px rgba(0, 0, 0, 0.22),
+    0 4px 12px -6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  /* Active label/icon reuse the Store "+" add-button brand token;
+     inactive items stay neutral gray (no blue). */
+  --nav-active-fg: var(--color-primary);
+  --nav-inactive-fg: rgba(11, 15, 20, 0.55);
+}
+
+.bottom-nav__slot {
+  display: flex;
+}
+
+.bottom-nav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 6px;
+  border-radius: 20px;
+  color: var(--nav-inactive-fg);
+  transition: color 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+
+.bottom-nav__item[aria-current="page"] {
+  color: var(--nav-active-fg);
+}
+
+.bottom-nav__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+/* Active highlight: absolutely positioned so it never affects layout, and
+   animated with opacity only (GPU-composited). No scale, no size change. */
+.bottom-nav__pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bottom-nav__item[aria-current="page"] .bottom-nav__pill {
+  opacity: 1;
+}
+
+.bottom-nav__label {
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  /* Fades/slides in on mount using transform + opacity only. */
+  animation: bottom-nav-label-in 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes bottom-nav-label-in {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Bottom spacing so the final content item stays reachable while the page
+   keeps scrolling underneath the single frosted pill (pill footprint:
+   12px + 68px = 80px; +8px breathing gap — no large empty gap). */
+.pb-safe-nav {
+  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Frosted fallback: when backdrop-filter is unsupported (or too costly),
+   keep both surfaces opaque enough to stay legible without the blur. */
+@supports not (
+  (backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))
+) {
+  .bottom-nav__bar {
+    background: rgba(255, 255, 255, 0.95);
+  }
+}
+
+/* Very narrow phones (≤359px): gently tighten the inner spacing so every
+   item — including the widened active label — stays fully inside the
+   compact pill without wrapping, clipping or overflowing the edges. */
+@media (max-width: 359px) {
+  .bottom-nav__item {
+    padding: 0 4px;
+  }
+  .bottom-nav__content {
+    padding: 0 8px;
+    gap: 7px;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav__item {
+    transition: none;
+  }
+  .bottom-nav__pill {
+    transition: none;
+  }
+  .bottom-nav__label {
+    animation: none;
+  }
+}
